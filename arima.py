@@ -100,8 +100,7 @@ config_dict = {'A': (6, 0 ,1),
 
 attr_name = 'open'
 agg_inter = 720
-model_syms = [['A', 'B', 'C', 'D', 'E', 'F'], ['G'], ['H'], ['I'], ['J']]
-# model_syms = [['A'], ['B'], ['C'], ['D'], ['E'], ['F'], ['G'], ['H'], ['I'], ['J']]
+model_syms = [['A'], ['B'], ['C'], ['D'], ['E'], ['F'], ['G'], ['H'], ['I'], ['J']]
 
 for symbols in model_syms:
     # for test: predict on 9 evaluation days (7*9=63 hrs) after the 78 training days
