@@ -87,7 +87,8 @@ def get_best_param(model_syms):
 # config_dict = get_best_param(model_syms)
 
 # Best param combinations
-config_dict = {'A': (6, 0 ,1),
+config_dict = {'A-F': (6, 0 ,1),
+               'A': (6, 0 ,1),
                'B': (6, 0, 0),
                'C': (10, 0, 1),
                'D': (15, 0, 0),
@@ -113,6 +114,8 @@ for symbols in model_syms:
         train_data = np.mean(train_data.reshape(-1, agg_inter), axis=1)
         train_data = (train_data - sym_min) / sym_max
         history.extend(train_data)
+    if len(symbols) > 1:
+        sym = 'A-F'
     model = ARIMA(np.array(history), config_dict[sym])
     model_fit = model.fit()
     for sym in symbols:
@@ -121,6 +124,7 @@ for symbols in model_syms:
         pred = model_fit.forecast(steps=63)[0]
         pred = pred * sym_max + sym_min
         np.save(f'arima_ind_{sym}_pred.npy', pred)
+        #np.save(f'arima_{sym}_pred_real.npy', pred)
 
     # for real: predict on 9 days into the future (7*9=63 hrs) after the 87 train and eval days
     history = []
@@ -132,6 +136,8 @@ for symbols in model_syms:
         train_data = np.mean(train_data.reshape(-1, agg_inter), axis=1)
         train_data = (train_data - sym_min) / sym_max
         history.extend(train_data)
+    if len(symbols) > 1:
+        sym = 'A-F'
     model = ARIMA(np.array(history), config_dict[sym])
     model_fit = model.fit()
     for sym in symbols:
@@ -140,3 +146,4 @@ for symbols in model_syms:
         pred = model_fit.forecast(steps=63)[0]
         pred = pred * sym_max + sym_min
         np.save(f'arima_ind_{sym}_pred_real.npy', pred)
+        #np.save(f'arima_{sym}_pred_real.npy', pred)
