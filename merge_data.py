@@ -9,7 +9,7 @@ def interp_length(p1, p2, length):
     return res
 
 def expand_pred(pred, aggr_int):
-    # expand saved array to correct 1 hr interval 
+    # expand prediction array to correct 5 sec interval
     res = np.zeros(len(pred) * aggr_int)
     for i in range(1, len(pred) + 1):
         if i == len(pred):
