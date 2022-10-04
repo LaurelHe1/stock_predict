@@ -10,7 +10,7 @@ data = StockData("train_data.csv")
 from merge_data import expand_pred
 from metrics import mse_by_day
 import seaborn as sns
-methods = ['baseline', 'arima_ind']
+methods = ['baseline', 'arima_ind', 'arima'] # shared model and all individual models
 p1_mse = np.zeros((len(methods), len(data.symbol_list)))
 p2_mse = np.zeros((len(methods), len(data.symbol_list)))
 avg_mse = np.zeros((len(methods), len(data.symbol_list)))
