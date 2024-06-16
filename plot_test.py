@@ -10,7 +10,8 @@ data = StockData("train_data.csv")
 from merge_data import expand_pred
 from metrics import mse_by_day
 import seaborn as sns
-methods = ['baseline', 'arima_ind', 'arima'] # shared model and all individual models
+methods = ['baseline', 'arima', 'arima_ind', 'rf', 'lstm'] # shared model and all individual models
+sns.set_context("notebook", font_scale=2, rc={"lines.linewidth": 2.5})
 p1_mse = np.zeros((len(methods), len(data.symbol_list)))
 p2_mse = np.zeros((len(methods), len(data.symbol_list)))
 avg_mse = np.zeros((len(methods), len(data.symbol_list)))
@@ -93,3 +94,53 @@ np.savetxt("avg_mse_pred_real.csv", avg_mse, delimiter=",")
 plt.tight_layout()
 plt.savefig(f'real_data_test.png')
 plt.close('all')
+
+#%%
+eval.solutions.open.to_list()
+# %%
+import pandas as pd
+submission = pd.read_csv('pred.csv', index_col="id")
+submission.rename(columns={'open': 'predicted_open'}, inplace=True)
+# %%
+submission
+# %%
+joint_data = pd.concat([eval.solutions, submission], axis=1)
+
+# %%
+joint_data.open.to_list()
+# %%
+joint_data.predicted_open
+
+#%%
+
+no_j = joint_data[joint_data.index.str.contains("A")]
+
+#%%
+import matplotlib.pyplot as plt
+length = len(no_j.open.to_list())
+plt.plot(no_j.open.to_list(), 'b')
+plt.plot(no_j.predicted_open.to_list(), 'r')
+plt.show()
+
+#%%
+import numpy as np
+no_j.loc[no_j.predicted_open.isnull(), "predicted_open"] = 0.
+no_j["error"] = (no_j.predicted_open - no_j.open)**2
+# n.b. I didn't divide by 10 in the eval equation in the instructions.
+daily_avg_error = 10*no_j.groupby(["period", "day"]).error.apply(
+    np.nanmean
+)
+period_errors = daily_avg_error.groupby("period").mean()
+
+#%%
+period_errors
+# return period_errors.to_dict()
+# %%
+import matplotlib.pyplot as plt
+length = len(joint_data.open.to_list())
+plt.plot(joint_data.open.to_list()[: length - 45360], 'b')
+plt.plot(joint_data.predicted_open.to_list()[: length - 45360], 'r')
+plt.show()
+# %%
+no_j_open = joint_data.open.to_list()[: length - 45360]
+no_j_pred = joint_data.predicted_open.to_list()[: length - 45360]
