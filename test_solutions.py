@@ -2,12 +2,20 @@
 Extract and format data from test_solutions.csv
 """
 
-import numpy as np
-import pandas as pd
+import os
 from typing import Dict, Text
 
+import numpy as np
+import pandas as pd
+
+
 class Evaluator(object):
+
   def __init__(self, solution_file: Text="../test_solutions.csv", missing_value: float=-1.0):
+    """Constructor."""
+    if not os.path.isfile(solution_file):
+      raise ValueError(f"Unable to find {solution_file}.")
+
     self.solutions = pd.read_csv(solution_file, index_col="id")
     self.solutions["day"] = self.solutions.index.map(
         lambda x: int(x.split('-')[1])
@@ -17,11 +25,18 @@ class Evaluator(object):
     )
     self.solutions.loc[self.solutions.open == -1.0, "open"] = np.nan
 
-  def evaluate_solution(self, submission_file: Text) -> Dict[int, float]:
+  def evaluate_submission(self, submission_file: Text) -> Dict[int, float]:
+    """Evaluates submitted entry.
+
+    Args:
+      submission_file: location of submission file. Must follow expected format.
+
+    Returns:
+      A dict mapping the period to the evaluated error.
     """
-    Evaluates actual real life stock
-    Returns: A dict mapping the period to the evaluated error.
-    """
+    if not os.path.isfile(submission_file):
+      raise ValueError(f"Unable to find {submission_file}.")
+
     submission = pd.read_csv(submission_file, index_col="id")
     submission.rename(columns={'open': 'predicted_open'}, inplace=True)
     joint_data = pd.concat([self.solutions, submission], axis=1)
